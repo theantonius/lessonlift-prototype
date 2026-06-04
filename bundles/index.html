@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LessonLift — Bundles &amp; Sticks Detection</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  body{background:#2D1B4E;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:24px;}
+  .wrap{width:100%;max-width:720px;}
+  a.back{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;}
+  a.back:hover{color:#A3FFE6;}
+  h1{font-size:24px;margin:14px 0 6px;}
+  .sub{color:rgba(255,255,255,.7);font-size:14px;margin-bottom:18px;line-height:1.45;}
+  video{width:100%;border-radius:14px;background:#000;border:1px solid rgba(255,255,255,.1);}
+  .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;margin-top:16px;}
+  .card h2{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:#A3FFE6;margin-bottom:8px;}
+  .card p{font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.85);}
+  .chip{display:inline-block;font-size:12px;color:#A3FFE6;background:rgba(163,255,230,.10);border:1px solid rgba(163,255,230,.35);padding:3px 10px;border-radius:20px;margin-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">‹ All demos</a>
+  <h1>Bundles &amp; sticks detection</h1>
+  <span class="chip">Computer vision · object detection</span>
+  <p class="sub">A trained model watches a recorded lesson and counts place-value materials: bundles (tens) and single sticks (ones). This clip is the model's own annotated output.</p>
+
+  <video src="bundles_sticks.mp4" controls autoplay muted loop playsinline></video>
+
+  <div class="card">
+    <h2>What you're seeing</h2>
+    <p>The model draws a box around each object it finds and labels it a bundle or a stick, then tallies each. Pair that count with what the student says, and LessonLift can tell whether a child counted on from twenty or counted every stick by ones — a real difference in place-value understanding.</p>
+  </div>
+  <div class="card">
+    <h2>How it was built</h2>
+    <p>A custom detection model trained on labeled example images (supervised learning). Every teacher confirmation can become a new labeled example, so the model adapts to a classroom's own materials over time.</p>
+  </div>
+</div>
+</body>
+</html>

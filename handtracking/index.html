@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LessonLift — Live Hand Tracking</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  body{background:#2D1B4E;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:24px;}
+  .wrap{width:100%;max-width:760px;}
+  a.back{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;}
+  a.back:hover{color:#A3FFE6;}
+  h1{font-size:24px;margin:14px 0 6px;}
+  .sub{color:rgba(255,255,255,.7);font-size:14px;margin-bottom:16px;line-height:1.45;}
+  .chip{display:inline-block;font-size:12px;color:#A3FFE6;background:rgba(163,255,230,.10);border:1px solid rgba(163,255,230,.35);padding:3px 10px;border-radius:20px;margin-bottom:14px;}
+  .stage{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.1);aspect-ratio:4/3;}
+  .mirror{position:absolute;inset:0;transform:scaleX(-1);}
+  #video,#canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .readout{position:absolute;left:14px;top:12px;z-index:5;font-weight:800;font-size:20px;color:#A3FFE6;text-shadow:0 1px 4px rgba(0,0,0,.6);}
+  .readout small{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.85);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-weight:700;font-size:15px;padding:13px 20px;border-radius:14px;background:#A3FFE6;color:#2D1B4E;margin-top:16px;}
+  .btn:active{transform:scale(.98);}
+  .status{font-size:13px;color:rgba(255,255,255,.7);margin-top:12px;min-height:18px;}
+  .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 18px;margin-top:16px;}
+  .card p{font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.85);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">‹ All demos</a>
+  <h1>Live hand tracking</h1>
+  <span class="chip">Computer vision · runs on your device</span>
+  <p class="sub">Real-time finger detection in your browser using MediaPipe.</p>
+  <button class="btn" id="start" style="display:none">Enable camera</button>
+  <div class="status" id="status"></div>
+
+  <div class="stage">
+    <div class="readout" id="readout"><span id="count">—</span><small>fingers up</small></div>
+    <div class="mirror">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <p>Hold your hands up to the camera. The model finds 21 points per hand and counts extended fingers using a rotation-invariant test. This allows the model to recognize students' finger-counting.</p>
+  </div>
+</div>
+
+<script type="module">
+import { HandLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const statusEl = document.getElementById("status");
+const countEl = document.getElementById("count");
+const startBtn = document.getElementById("start");
+
+let handLandmarker = null;
+let running = false;
+let lastVideoTime = -1;
+
+const TIPS = [8,12,16,20], PIPS = [6,10,14,18];
+const d = (a,b)=>Math.hypot(a.x-b.x, a.y-b.y);
+
+function countFingers(lm){
+  let n = 0;
+  const wrist = lm[0];
+  for (let i=0;i<4;i++){ if (d(lm[TIPS[i]],wrist) > d(lm[PIPS[i]],wrist)) n++; }
+  // thumb: handedness- and rotation-invariant. Far from pinky base = extended.
+  const handSize = d(lm[0], lm[9]) || 1e-6;
+  if (d(lm[4], lm[17]) / handSize > 1.1) n++;
+  return n;
+}
+
+async function init(){
+  statusEl.textContent = "Loading model…";
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  handLandmarker = await HandLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+      delegate: "GPU"
+    },
+    runningMode: "VIDEO",
+    numHands: 4
+  });
+  statusEl.textContent = "Model ready. Click Enable camera.";
+  startBtn.style.display = "inline-flex";
+}
+
+async function enableCamera(){
+  if (!handLandmarker){ statusEl.textContent = "Still loading the model, one sec…"; return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    video.addEventListener("loadeddata", () => { running = true; statusEl.textContent = "Tracking. Hold up your hands."; loop(); }, { once:true });
+    startBtn.style.display = "none";
+  } catch(e){
+    statusEl.textContent = "Camera blocked. Allow camera access (and use an https link).";
+  }
+}
+
+let drawer = null;
+
+function loop(){
+  if (!running) return;
+  if (canvas.width !== video.videoWidth){ canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
+  if (!drawer) drawer = new DrawingUtils(ctx);
+  const now = performance.now();
+  if (video.currentTime !== lastVideoTime){
+    lastVideoTime = video.currentTime;
+    const res = handLandmarker.detectForVideo(video, now);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let total = 0;
+    if (res.landmarks){
+      for (const lm of res.landmarks){
+        drawer.drawConnectors(lm, HandLandmarker.HAND_CONNECTIONS, { color:"#A3FFE6", lineWidth:4 });
+        drawer.drawLandmarks(lm, { color:"#ffffff", lineWidth:1, radius:4 });
+        total += countFingers(lm);
+      }
+    }
+    countEl.textContent = total;
+  }
+  requestAnimationFrame(loop);
+}
+
+startBtn.addEventListener("click", enableCamera);
+init();
+</script>
+</body>
+</html>

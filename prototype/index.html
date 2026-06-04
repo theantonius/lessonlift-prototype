@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LessonLift Prototype</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0;
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+       -webkit-tap-highlight-color: transparent; }
+  body { background: #2D1B4E; color: #fff; min-height: 100vh;
+         display: flex; justify-content: center; align-items: flex-start; padding: 18px; }
+  .phone { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
+
+  .brandbar { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .brand { font-family: "Arial Rounded MT Bold", sans-serif; font-variant: small-caps;
+           font-size: 22px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,.2); }
+  .ondevice { font-size: 11px; color:#A3FFE6; background: rgba(163,255,230,.10);
+              border: 1px solid rgba(163,255,230,.35); padding: 3px 9px; border-radius: 20px; }
+
+  h1 { font-family:"Arial Rounded MT Bold",sans-serif; font-variant: small-caps;
+       font-size: 24px; letter-spacing: .5px; margin-top: 4px; }
+  h2 { font-family:"Arial Rounded MT Bold",sans-serif; font-size: 13px; text-transform: uppercase;
+       letter-spacing: .5px; color: rgba(255,255,255,.6); margin-bottom: 2px; }
+  .subtitle { font-size: 13px; color: rgba(255,255,255,.7); }
+  .muted { color: rgba(255,255,255,.55); }
+
+  .card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.06);
+          border-radius: 16px; padding: 14px 16px; }
+  .clickable { cursor: pointer; transition: transform .12s ease, background .2s ease; }
+  .clickable:hover { background: rgba(255,255,255,.13); }
+  .clickable:active { transform: scale(.99); }
+  .student { display:flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .urgency-red { border-left: 5px solid #FF5A5A; }
+  .urgency-yellow { border-left: 5px solid #FFD15C; }
+  .urgency-green { border-left: 5px solid #5CFF9D; }
+  .name { font-weight: 700; font-size: 16px; }
+  .badge { font-size: 11px; background: rgba(255,255,255,.15); padding: 2px 8px; border-radius: 20px; }
+  .meta { display:flex; align-items:center; gap:8px; margin-bottom: 6px; }
+  .finding { font-size: 13.5px; line-height: 1.35; color: rgba(255,255,255,.92); }
+  .chip { display:inline-flex; align-items:center; gap:6px; margin-top: 8px; font-size: 12px;
+          color:#A3FFE6; background: rgba(163,255,230,.10); border:1px solid rgba(163,255,230,.3);
+          padding: 3px 9px; border-radius: 20px; }
+  .arrow { color: rgba(255,255,255,.4); font-size: 20px; align-self:center; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px;
+         border:none; cursor:pointer; font-weight:700; font-size:15px; padding: 13px 16px;
+         border-radius: 14px; width:100%; }
+  .btn-primary { background:#A3FFE6; color:#2D1B4E; box-shadow: 0 4px 12px rgba(163,255,230,.18); }
+  .btn-ghost { background: rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.18); }
+  .btn-danger { background: rgba(255,90,90,.16); color:#FF9A9A; border:1px solid rgba(255,90,90,.4); }
+  .btn-row { display:flex; gap:10px; }
+  .btn-row .btn { width:100%; }
+  .btn:active { transform: scale(.98); }
+
+  .center { text-align:center; }
+  .hero { padding: 26px 18px; text-align:center; }
+  .hero .big { font-size: 46px; margin-bottom: 6px; }
+  video { width:100%; border-radius: 12px; background:#000; margin-top: 4px; }
+  .kv { display:flex; justify-content:space-between; font-size:13px; padding: 7px 0;
+        border-bottom: 1px solid rgba(255,255,255,.08); }
+  .kv:last-child { border-bottom: none; }
+  .kv b { color:#A3FFE6; font-weight:700; }
+  .transcript { font-size:13.5px; font-style: italic; color: rgba(255,255,255,.85); line-height:1.4; }
+
+  .spinner { width:44px; height:44px; border:4px solid rgba(163,255,230,.25);
+             border-top-color:#A3FFE6; border-radius:50%; margin: 10px auto;
+             animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .back { font-size:13px; color: rgba(255,255,255,.6); cursor:pointer; display:inline-block; }
+  .hide { display:none; }
+  .pill-status { font-size:12px; padding:3px 10px; border-radius:20px; font-weight:700; }
+  .ok { background: rgba(92,255,157,.16); color:#9affc0; }
+  .plan-step { font-size:13.5px; line-height:1.4; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; gap:10px; }
+  .plan-step:last-child{ border-bottom:none; }
+  .rm { color:#FF9A9A; cursor:pointer; font-size:12px; white-space:nowrap; }
+  .tag { font-size:11px; color:#2D1B4E; background:#A3FFE6; padding:2px 7px; border-radius:6px; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="phone" id="app"></div>
+
+<script>
+// ---------- mock data ----------
+const annotations = {
+  finger: {
+    title: "Adding Numbers with Fingers",
+    student: "Maria",
+    clip: "clips/finger_counting.mp4",
+    timestamp: "02:14",
+    confidence: "0.92",
+    transcript: "The teacher is trying to do a missing add-in problem. There are twelve counters here. I put some more over here. There's sixteen in total. How many are under this cover? The student counts on from twelve with fingers and says four."
+  },
+  bundles: {
+    title: "Placevalue with Bundles & Sticks",
+    student: "Diego",
+    clip: "clips/bundles_sticks.mp4",
+    timestamp: "03:48",
+    confidence: "0.58",
+    transcript: "The teacher put four bundles and two sticks under the cover. Diego said there were six under the cover."
+  }
+};
+
+let state = { reportAccepted: false, planGenerated: false, fixed: {} };
+
+const app = document.getElementById('app');
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function render(html){ app.innerHTML = '<div class="brandbar"><div class="brand">LessonLift</div>'
+  + '<div class="ondevice">● On-device</div></div>' + html; window.scrollTo(0,0); }
+
+// ---------- screens ----------
+function start(){
+  render(`
+    <div class="card hero">
+      <div class="big">\u{1F3A5}</div>
+      <h1>Analyze a lesson</h1>
+      <p class="subtitle" style="margin:8px 0 4px">Turn a recorded small-group lesson into a per-student report. Analysis runs on this device. Nothing is uploaded.</p>
+    </div>
+    <button class="btn btn-primary" onclick="analyzing()">Analyze video</button>
+    <p class="muted center" style="font-size:12px">Grade 1 intervention group · 3 students</p>
+  `);
+}
+
+function analyzing(){
+  render(`
+    <div class="card center" style="padding:30px 18px">
+      <div class="spinner"></div>
+      <h1 style="font-size:20px">Analyzing on this device…</h1>
+      <p class="subtitle" style="margin-top:6px">Reading finger patterns, manipulatives, and speech. No video leaves the room.</p>
+    </div>`);
+  setTimeout(report, 1700);
+}
+
+function annLine(key){
+  const a = annotations[key];
+  const fixed = state.fixed[key];
+  return `<div class="chip" onclick="annotation('${key}')">▶ ${a.title} · ${a.timestamp}${fixed?' · updated':''}</div>`;
+}
+
+function report(){
+  const accepted = state.reportAccepted;
+  render(`
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>Lesson report</h1>
+      ${accepted?'<span class="pill-status ok">Accepted</span>':''}
+    </div>
+    <p class="subtitle">Tap an annotation to see the moment, the clip, and the transcript. Confirm or fix anything before you accept.</p>
+
+    <h2 style="margin-top:4px">Needs attention</h2>
+    <div class="card urgency-red student clickable" onclick="annotation('finger')">
+      <div>
+        <div class="meta"><span class="name">Maria</span><span class="badge">L2 Emerging</span></div>
+        <div class="finding">Counted 1–11, then said 20 for 12. Mixed simultaneous and sequential finger patterns; self-corrected once.</div>
+        ${annLine('finger')}
+      </div><div class="arrow">›</div>
+    </div>
+
+    <div class="card urgency-yellow student clickable" onclick="annotation('bundles')">
+      <div>
+        <div class="meta"><span class="name">Diego</span><span class="badge">L1 Entering</span></div>
+        <div class="finding">Built 24 with bundles and sticks correctly, but counted the sticks one by one rather than from 20.</div>
+        ${annLine('bundles')}
+      </div><div class="arrow">›</div>
+    </div>
+
+    <h2 style="margin-top:6px">On track</h2>
+    <div class="card urgency-green student">
+      <div>
+        <div class="meta"><span class="name">Xian</span><span class="badge">L3 Developing</span></div>
+        <div class="finding">Counted forward 1–19 accurately. No language barriers observed in this task.</div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="downloadStub('report')">↓ Download report</button>
+    ${accepted
+      ? `<button class="btn btn-primary" onclick="planChoice()">Continue</button>`
+      : `<button class="btn btn-primary" onclick="acceptReport()">Accept report</button>`}
+  `);
+}
+
+function annotation(key){
+  const a = annotations[key];
+  render(`
+    <span class="back" onclick="report()">‹ Back to report</span>
+    <h1 style="font-size:20px">${a.title}</h1>
+    <p class="subtitle">${a.student}</p>
+    <div class="card">
+      <video src="${a.clip}" controls autoplay muted loop playsinline></video>
+      <div class="kv"><span class="muted">Timestamp</span><b>${a.timestamp}</b></div>
+      <div class="kv"><span class="muted">Confidence</span><b>${a.confidence}</b></div>
+      <div style="margin-top:10px"><span class="muted" style="font-size:12px">Transcript</span>
+        <p class="transcript" style="margin-top:4px">${a.transcript}</p></div>
+    </div>
+    <h2>Is this annotation correct?</h2>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="report()">Yes, looks right</button>
+      <button class="btn btn-ghost" onclick="fixChoice('${key}')">No, fix it</button>
+    </div>
+  `);
+}
+
+function fixChoice(key){
+  render(`
+    <span class="back" onclick="annotation('${key}')">‹ Back</span>
+    <h1 style="font-size:20px">Fix this assessment</h1>
+    <p class="subtitle">You can remove it, or adjust it and let LessonLift redraft the report.</p>
+    <div class="card"><p class="finding">${annotations[key].title} · ${annotations[key].student}</p></div>
+    <button class="btn btn-ghost" onclick="regenerate('${key}','altered')">Alter, then regenerate</button>
+    <button class="btn btn-danger" onclick="regenerate('${key}','removed')">Remove this assessment</button>
+  `);
+}
+
+function regenerate(key, how){
+  state.fixed[key] = how;
+  render(`
+    <div class="card center" style="padding:30px 18px">
+      <div class="spinner"></div>
+      <h1 style="font-size:20px">Regenerating report…</h1>
+      <p class="subtitle" style="margin-top:6px">Applying your change (${how}).</p>
+    </div>`);
+  setTimeout(report, 1300);
+}
+
+function acceptReport(){
+  state.reportAccepted = true;
+  planChoice();
+}
+
+function planChoice(){
+  render(`
+    <h1>Report accepted</h1>
+    <p class="subtitle">Want LessonLift to draft tomorrow's lesson plan from this report?</p>
+    <div class="card center" style="padding:22px"><div class="big" style="font-size:40px">\u{1F4DD}</div>
+      <p class="finding" style="margin-top:6px">Activities matched to each student's level, with language supports by WIDA level.</p></div>
+    <button class="btn btn-primary" onclick="generatePlan()">Yes, generate lesson plan</button>
+    <button class="btn btn-ghost" onclick="done()">No, just give me the report</button>
+  `);
+}
+
+function generatePlan(){
+  render(`
+    <div class="card center" style="padding:30px 18px">
+      <div class="spinner"></div>
+      <h1 style="font-size:20px">Building lesson plan…</h1>
+    </div>`);
+  setTimeout(()=>{ state.planGenerated = true; plan(); }, 1500);
+}
+
+let planSteps = [
+  { t:"Bunny Ears", s:"Students make finger patterns over their heads like bunny ears so they can't see their own fingers (unseen pattern).", tag:"SN" },
+  { t:"Matching Fingers to Dots", s:"Students create a finger pattern to match a dot pattern.", tag:"SN" },
+  { t:"Matching Fingers to Dice Patterns", s:"Students play a memory type game where they match their finger pattern cards to spatial pattern cards.", tag:"SN" }
+];
+
+function plan(){
+  const steps = planSteps.map((p,i)=>`
+    <div class="plan-step">
+      <div><span class="tag">${p.tag}</span> <b style="font-size:14px">${p.t}</b>
+        <div class="muted" style="font-size:12.5px;margin-top:3px">${p.s}</div></div>
+      <span class="rm" onclick="removeStep(${i})">remove</span>
+    </div>`).join('');
+  render(`
+    <h1>Lesson plan</h1>
+    <p class="subtitle">Drafted from the report. Edit the activities, or accept as is.</p>
+    <div class="card">${steps || '<p class="muted">No activities. Add one back or accept.</p>'}</div>
+    <button class="btn btn-ghost" onclick="addStep()">+ Add activity back</button>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="done()">Looks good</button>
+    </div>
+  `);
+}
+let removed = [];
+function removeStep(i){ removed.push(planSteps[i]); planSteps.splice(i,1); plan(); }
+function addStep(){ if(removed.length){ planSteps.push(removed.pop()); } plan(); }
+
+function done(){
+  const withPlan = state.planGenerated;
+  render(`
+    <div class="card center" style="padding:28px 18px">
+      <div class="big" style="font-size:46px">✅</div>
+      <h1 style="font-size:22px">${withPlan?'Report & plan ready':'Report ready'}</h1>
+      <p class="subtitle" style="margin-top:6px">Saved to your account. The video and audio were never stored.</p>
+    </div>
+    <button class="btn btn-primary" onclick="downloadStub('report')">↓ Download report</button>
+    ${withPlan?`<button class="btn btn-primary" onclick="downloadStub('lesson plan')">↓ Download lesson plan</button>`:''}
+    <button class="btn btn-ghost" onclick="resetAll()">Start over</button>
+  `);
+}
+
+function downloadStub(what){ alert('Demo: this would download the ' + what + ' as a PDF.'); }
+function resetAll(){ state = { reportAccepted:false, planGenerated:false, fixed:{} };
+  planSteps = planSteps.concat(removed.reverse()); removed=[]; start(); }
+
+start();
+</script>
+</body>
+</html>
