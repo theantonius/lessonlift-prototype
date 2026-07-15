@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LessonLift — Review Transcript · Group A · March 15 Session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1f1f1f; --gray:#757575; --line:#d9d9d9; --line2:#ebebeb;
+    --blue:#2666d9; --bluebg:#ebf2ff; --obs:#eef4ff; --obsline:#c9dcf8;
+    --red:#ee3831; --warnbg:#fdf3d7; --warnline:#e8c96a; --warntext:#8a5a00;
+    --flagbg:#fdeacd; --flagtext:#a04b00;
+    --hl:#fff3bf; --hlline:#e6c94c;
+    --green:#268c4d; --greenbg:#e8f7ed;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Inter',system-ui,sans-serif; background:#fff; color:var(--ink);}
+  .page{max-width:1280px; margin:0 auto;}
+
+  header{display:flex; align-items:center; gap:24px; padding:32px; border-bottom:1px solid var(--line);}
+  .logo{display:flex; align-items:center; background:var(--red); border-radius:6px; padding:6px 10px 6px 8px; height:64px;}
+  .logo .burst{color:#fff; font-size:34px; line-height:1; margin-right:8px;}
+  .logo .word{background:#fff; border-radius:3px; padding:3px 8px; font-family:'Lato',sans-serif; font-weight:700; color:var(--red); font-size:17px; line-height:1.1; letter-spacing:.5px;}
+  nav{margin-left:auto; display:flex; gap:8px; align-items:center;}
+  nav a{color:var(--ink); text-decoration:none; font-size:15px; padding:8px 14px; border-radius:8px;}
+  nav a.active{background:#f5f5f5;}
+  .signout{border:1px solid var(--line); background:#f5f5f5; border-radius:8px; padding:10px 18px; font-size:15px; margin-left:16px;}
+  .avatar{width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#e9b1a2,#8a5a44); margin-left:12px;}
+
+  .content{padding:32px; display:flex; flex-direction:column; gap:24px;}
+  .breadcrumb{color:var(--blue); font-size:14px; font-weight:600; text-decoration:none;}
+  .titleRow{display:flex; align-items:center; gap:24px;}
+  .titleStack .label{font-size:13px; font-weight:600; color:var(--gray); margin-bottom:6px;}
+  .titleStack h1{font-size:40px; font-weight:700;}
+  .cta{margin-left:auto; background:var(--blue); color:#fff; font-weight:600; font-size:15px; border:none; border-radius:8px; padding:14px 20px; cursor:pointer;}
+
+  .banner{border-radius:8px; padding:14px 18px; display:flex; gap:14px; align-items:center;}
+  .banner .btitle{font-weight:700; font-size:14px;}
+  .banner .bsub{font-size:13px; margin-top:2px;}
+  .banner.warn{background:var(--warnbg); border:1px solid var(--warnline); color:var(--warntext);}
+  .banner.flag{background:var(--flagbg); color:var(--flagtext);}
+  .banner.flag.done{background:var(--greenbg); color:var(--green);}
+  .banner.flag .review{margin-left:auto; background:#fff; border:1px solid var(--flagtext); color:var(--flagtext); font-weight:600; font-size:13px; border-radius:8px; padding:10px 16px; cursor:pointer;}
+  .banner.flag.done .review{display:none;}
+
+  .main{display:grid; grid-template-columns: 58% 1fr; gap:32px; align-items:start;}
+  .videoCol{display:flex; flex-direction:column; gap:12px;}
+  .videoWrap{position:relative; background:#111; border-radius:8px; overflow:hidden; cursor:pointer;}
+  .videoWrap video{display:block; width:100%; height:auto;}
+  .playBtn{position:absolute; inset:0; margin:auto; width:70px; height:70px; border-radius:50%; background:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity .2s;}
+  .playBtn:after{content:''; display:block; width:0; height:0; border-left:22px solid #111; border-top:14px solid transparent; border-bottom:14px solid transparent; margin-left:6px;}
+  .playBtn.hidden{opacity:0; pointer-events:none;}
+  .progress{height:6px; background:var(--line); border-radius:3px; cursor:pointer; position:relative;}
+  .progress .fill{height:100%; width:0%; background:var(--blue); border-radius:3px;}
+  .videoFooter{display:flex; align-items:center; gap:14px; margin-top:24px;}
+  .timecode{font-size:14px; color:var(--gray);}
+  .skipBack{border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px; font-weight:600; color:var(--ink); cursor:pointer;}
+  .skipBack:hover{background:#f5f5f5;}
+  .speedSeg{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .speedSeg button{border:none; background:#fff; font-size:12px; font-weight:600; color:var(--gray); padding:8px 10px; cursor:pointer; border-right:1px solid var(--line); font-family:'Inter',sans-serif;}
+  .speedSeg button:last-child{border-right:none;}
+  .speedSeg button.on{background:#f5f5f5; color:var(--ink);}
+  .export{margin-left:auto; background:#fff; border:1px solid var(--line); border-radius:8px; padding:10px 16px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer;}
+
+  .panel{border:1px solid var(--line); border-radius:12px; display:flex; flex-direction:column; max-height:680px;}
+  .panelTabs{display:flex; align-items:center; gap:24px; padding:20px 24px; border-bottom:1px solid var(--line);}
+  .panelTabs .tab{font-size:15px; color:var(--gray); cursor:pointer;}
+  .panelTabs .tab.active{color:var(--ink); font-weight:700;}
+  .panelTabs select.filter{margin-left:auto; font-size:13px; border:1px solid var(--line); border-radius:6px; padding:6px 8px; color:var(--ink); background:#fff; font-family:'Inter',sans-serif; cursor:pointer;}
+  .chips{display:flex; gap:8px; padding:16px 24px 8px; flex-wrap:wrap;}
+  .chip{font-size:13px; font-weight:600; border:1px solid var(--line); border-radius:999px; padding:6px 14px; color:var(--ink); background:#fff; cursor:pointer;}
+  .chip.dark{background:var(--ink); color:#fff; border-color:var(--ink);}
+  /* Activity view */
+  .aHead{padding:4px 0 10px; border-bottom:1px solid var(--line2); margin-bottom:4px;}
+  .aHead .aname{font-size:14px; font-weight:700;}
+  .aHead .atarget{font-size:12px; color:var(--gray); margin-top:2px;}
+  .aGroup{display:flex; flex-direction:column; gap:6px;}
+  .aGroup .gname{font-size:13px; font-weight:700;}
+  .aItem{display:grid; grid-template-columns:44px 1fr; gap:12px; cursor:pointer;}
+  .aItem .ts{font-size:12px; color:var(--gray); padding-top:3px;}
+  .aItem .abody{font-size:13px; background:var(--obs); border:1px solid var(--obsline); border-radius:8px; padding:8px 10px;}
+  .aItem.removed .abody{opacity:.45; text-decoration:line-through;}
+  .aItem .atags{margin-top:4px; display:flex; gap:6px;}
+  .aEmpty{font-size:12px; color:var(--gray); font-style:italic;}
+  .miniTag{font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px;}
+  .miniTag.flag{background:var(--flagbg); color:var(--flagtext);}
+  .miniTag.ok{background:var(--greenbg); color:var(--green);}
+  .miniTag.gone{background:#f0f0f0; color:var(--gray);}
+  .miniTag.edit{background:#f0f0f0; color:var(--gray);}
+  .tlist{overflow-y:auto; padding:8px 24px 20px; display:flex; flex-direction:column; gap:14px;}
+  .entry{display:grid; grid-template-columns:44px 1fr; gap:12px; cursor:pointer; border-radius:8px;}
+  .entry .ts{font-size:12px; color:var(--gray); padding-top:3px;}
+  .entry .who{font-size:13px; font-weight:700; margin-bottom:3px;}
+  .entry .line{font-size:14px; color:var(--ink);}
+  .entry .speech{padding:6px 8px; border-radius:8px; border:2px solid transparent; position:relative;}
+  .entry.obs .speech{background:var(--obs); border:2px solid var(--obsline); border-radius:10px; padding:10px 12px;}
+  .obsHead{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--blue); margin-bottom:4px;}
+  .obsHead .lowconf{margin-left:auto; font-size:11px; font-weight:700; color:var(--flagtext); background:var(--flagbg); border-radius:999px; padding:2px 8px; white-space:nowrap;}
+  .obsHead .reviewed{margin-left:auto; font-size:11px; font-weight:700; color:var(--green); background:var(--greenbg); border-radius:999px; padding:2px 8px; white-space:nowrap;}
+  .obsHead .removedTag{margin-left:auto; font-size:11px; font-weight:700; color:var(--gray); background:#f0f0f0; border-radius:999px; padding:2px 8px; white-space:nowrap;}
+  .entry.active .speech{background:var(--hl); border-color:var(--hlline);}
+  .entry.obs.active .speech{background:#fdf7dd; border-color:var(--hlline);}
+  .entry.removed .speech{opacity:.45;}
+  .entry.removed .line{text-decoration:line-through;}
+
+  /* edit affordance */
+  .hoverBtns{position:absolute; top:6px; right:6px; display:flex; gap:4px; opacity:0; transition:opacity .15s;}
+  .entry:hover .hoverBtns{opacity:1;}
+  .hoverBtns button{border:1px solid var(--line); background:#fff; border-radius:6px; font-size:12px; padding:3px 7px; cursor:pointer; color:var(--gray);}
+  .hoverBtns button:hover{background:#f5f5f5; color:var(--ink);}
+  .removedTagInline{display:inline-block; font-size:10px; font-weight:700; color:var(--gray); background:#f0f0f0; border-radius:999px; padding:1px 7px; margin-left:8px; vertical-align:1px;}
+  .editedTag{display:inline-block; font-size:10px; font-weight:700; color:var(--gray); background:#f0f0f0; border-radius:999px; padding:1px 7px; margin-left:8px; vertical-align:1px; cursor:help;}
+
+  /* observation action bar */
+  .obsActions{display:flex; gap:6px; margin-top:10px;}
+  .obsActions button{border:1px solid var(--line); background:#fff; border-radius:6px; font-size:12px; font-weight:600; padding:5px 10px; cursor:pointer; color:var(--ink);}
+  .obsActions button.accept{border-color:var(--green); color:var(--green);}
+  .obsActions button.remove{color:var(--gray);}
+  .obsActions button:hover{background:#f5f5f5;}
+  .undoBtn{border:none; background:none; color:var(--blue); font-size:12px; font-weight:600; cursor:pointer; margin-top:8px; padding:0;}
+
+  /* inline editor */
+  .editor{margin-top:8px; display:flex; flex-direction:column; gap:8px;}
+  .editor textarea{width:100%; font-family:'Inter',sans-serif; font-size:14px; padding:8px 10px; border:1px solid var(--blue); border-radius:8px; resize:vertical; min-height:56px;}
+  .editor .erow{display:flex; gap:8px; align-items:center;}
+  .editor select{font-family:'Inter',sans-serif; font-size:13px; padding:6px 8px; border:1px solid var(--line); border-radius:6px;}
+  .editor .save{background:var(--ink); color:#fff; border:none; border-radius:6px; font-size:13px; font-weight:600; padding:7px 14px; cursor:pointer;}
+  .editor .cancel{background:#fff; border:1px solid var(--line); border-radius:6px; font-size:13px; font-weight:600; padding:7px 14px; cursor:pointer; color:var(--gray);}
+
+  /* ===== Look-fors (Formative Assessment) ===== */
+  .lfTitleRow{display:flex; align-items:center; gap:10px;}
+  .lfTitleRow .eye{font-size:22px;}
+  .lfTitleRow h2{font-size:16px; font-weight:600;}
+  .lfTabs{display:flex; gap:4px; margin:12px 0 0 44px;}
+  .lfTab{font-size:14px; font-weight:500; color:var(--gray); background:#f2f4f7; border:1px solid var(--line); border-bottom:none; border-radius:8px 8px 0 0; padding:10px 20px; cursor:pointer;}
+  .lfTab.on{background:#fff; color:var(--ink); font-weight:600;}
+  .lfTab.add{border-style:dashed;}
+  .lfRow{display:grid; grid-template-columns:44px 1fr;}
+  .lfGutter{display:flex; flex-direction:column; align-items:flex-end; gap:8px; padding:16px 10px 0 0;}
+  .lfGutter button{border:none; background:none; color:var(--gray); font-size:13px; cursor:pointer; padding:0; position:relative;}
+  .lfGutter button:hover{color:var(--ink);}
+  .lfGutter button[data-tip]:hover::after{content:attr(data-tip); position:absolute; left:22px; top:50%; transform:translateY(-50%); background:var(--ink); color:#fff; font-size:11px; font-weight:600; padding:4px 8px; border-radius:6px; white-space:nowrap; z-index:5; font-family:'Inter',sans-serif;}
+  .lfCells{display:grid; grid-template-columns:1fr 200px repeat(5,90px); border-left:1px solid var(--line); border-right:1px solid var(--line); border-top:1px solid var(--line2); background:#fff; align-items:center;}
+  .lfHeader .lfCells{background:#f9fafb; border-top:1px solid var(--line); border-radius:8px 8px 0 0; height:150px; align-items:end;}
+  .lfHeader .hlbl{font-size:13px; font-weight:500; padding:0 0 12px 16px;}
+  .lfHeader .rotCell{display:flex; justify-content:center; align-items:flex-end; height:150px; border-left:1px solid var(--line2); padding-bottom:10px;}
+  .rotLbl{writing-mode:vertical-rl; transform:rotate(180deg); font-size:11px; color:var(--ink); max-height:132px;}
+  .lfTask{font-size:14px; padding:16px; line-height:20px;}
+  .lfAnswer{padding:10px;}
+  .lfAnswer input{width:100%; font-family:'Inter',sans-serif; font-size:14px; padding:8px 10px; border:1px solid var(--line); border-radius:6px;}
+  .cbCell{display:flex; justify-content:center; align-items:center; border-left:1px solid var(--line2); align-self:stretch;}
+  .cbBox{width:22px; height:22px; border:1px solid var(--line); border-radius:5px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px;}
+  .cbBox.on{background:var(--ink); border-color:var(--ink);}
+  .cbBox.ai{background:#7f56d9; border-color:#7f56d9;}
+  .cbBox.flagged{background:#d92d20; border-color:#d92d20;}
+  .flagIc{font-size:11px; margin-left:4px;}
+  .lfAdd .lfCells{display:block; background:#fbfcfd; border-bottom:1px solid var(--line); border-radius:0 0 8px 8px; padding:13px 16px;}
+  .lfAdd button{border:none; background:none; color:var(--blue); font-size:13px; font-weight:500; cursor:pointer; padding:0;}
+
+  .summary h2{font-size:24px; font-weight:700; display:inline;}
+  .aiTag{display:inline-block; vertical-align:4px; margin-left:10px; background:var(--bluebg); color:var(--blue); font-size:11px; font-weight:700; border-radius:999px; padding:4px 10px;}
+  .summary .sub{font-size:13px; color:var(--gray); margin-top:4px;}
+  .sumCard{border:1px solid var(--line); border-radius:12px; padding:20px; margin-top:16px; display:flex; flex-direction:column; gap:12px; transition:opacity .3s;}
+  .sumCard.updating{opacity:.35;}
+  .sumCard p{font-size:14px; line-height:22px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="logo"><span class="burst">✳</span><span class="word">LESSON<br>LIFT</span></div>
+    <nav>
+      <a class="active" href="#">Lessons</a>
+      <a href="#">Students</a>
+      <a href="#">Assessments</a>
+      <button class="signout">Sign Out</button>
+      <div class="avatar"></div>
+    </nav>
+  </header>
+
+  <div class="content">
+    <a class="breadcrumb" href="#">← Back to Lesson Plan</a>
+
+    <div class="titleRow">
+      <div class="titleStack">
+        <div class="label">Review Transcript</div>
+        <h1>Group A · March 15 Session</h1>
+      </div>
+      <button class="cta">Continue to Lesson Plan &nbsp;→</button>
+    </div>
+
+    <div class="main">
+      <div class="videoCol">
+        <div class="videoWrap" id="videoWrap">
+          <video id="vid" src="fourstudents_1.mp4" preload="metadata" playsinline></video>
+          <button class="playBtn" id="playBtn" aria-label="Play"></button>
+        </div>
+        <div class="progress" id="progress"><div class="fill" id="fill"></div></div>
+        <div class="videoFooter">
+          <span class="timecode" id="timecode">0:00 / 0:00</span>
+          <button class="skipBack" id="skipBack" title="Jump back 3 seconds">↺ 3s</button>
+          <div class="speedSeg" id="speedSeg" title="Playback speed">
+            <button data-speed="0.5">0.5×</button>
+            <button data-speed="0.75">0.75×</button>
+            <button data-speed="1" class="on">1×</button>
+            <button data-speed="1.5">1.5×</button>
+            <button data-speed="2">2×</button>
+          </div>
+          <button class="export">Export</button>
+        </div>
+
+        <div class="banner warn">
+          <span style="font-size:18px;">⚠</span>
+          <div>
+            <div class="btitle">AI-generated transcript may contain errors</div>
+            <div class="bsub">Review observations carefully. AI may misidentify speakers or misinterpret what was said or done. Hover any line to edit it.</div>
+          </div>
+        </div>
+
+        <div class="banner flag" id="flagBanner">
+          <span style="font-size:16px;" id="flagIcon">⚑</span>
+          <div>
+            <div class="btitle" id="flagTitle">2 moments need your review</div>
+            <div class="bsub" id="flagSub">AI flagged 2 observations with low confidence. Check these before using.</div>
+          </div>
+          <button class="review" id="reviewNow">Review now</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelTabs">
+          <span class="tab" id="tabActivity">Activity</span>
+          <span class="tab active" id="tabTranscript">Transcript</span>
+          <span class="tab" id="tabCombined">Combined</span>
+          <select class="filter" id="typeFilter" title="Filter by entry type">
+            <option value="all">All</option>
+            <option value="speech">Speech only</option>
+            <option value="obs">AI observations</option>
+            <option value="flagged">Flagged</option>
+            <option value="removed">Removed</option>
+          </select>
+        </div>
+        <div class="chips" id="chips">
+          <span class="chip" data-who="Teacher">Teacher</span>
+          <span class="chip" data-who="Melissa">Melissa</span>
+          <span class="chip" data-who="Tina">Tina</span>
+          <span class="chip" data-who="Josie">Josie</span>
+          <span class="chip" data-who="Kelly">Kelly</span>
+        </div>
+        <div class="tlist" id="tlist"></div>
+        <div class="tlist" id="alist" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="lookfors">
+      <div class="lfTitleRow"><span class="eye">◉</span><h2>Formative Assessment</h2></div>
+      <div class="lfTabs" id="lfTabs"></div>
+      <div id="lfTable"></div>
+    </div>
+
+    <div class="summary">
+      <div>
+        <h2>Summary</h2><span class="aiTag">AI-generated</span>
+      </div>
+      <div class="sub">This summary is Ai-Generated and may container errors. Review before adding to student records.
+        <span id="sumStatus" style="font-style:italic;"></span></div>
+      <div class="sumCard" id="sumCard"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Transcript data — timestamps from burned-in captions + finger-detection events JSON
+const SPEAKERS = ['Teacher','Melissa','Tina','Josie','Kelly'];
+const entries = [
+  {t:0.0,  who:'Teacher', text:'Can you show me six on your fingers?'},
+  {t:2.0,  who:'Tina', obs:true, lowconf:true,  text:'Holds up ten fingers. Then looks at her hands and puts down fingers.'},
+  {t:2.5,  who:'Teacher', text:'Show me what six looks like on your fingers.'},
+  {t:2.8,  who:'Melissa', obs:true, text:'Simultaneously shows six as five fingers on the left and the index finger on the right.'},
+  {t:3.5,  who:'Kelly', obs:true, lowconf:true, text:'Shows six as five and one after checking her classmates’ hands.'},
+  {t:3.6,  who:'Josie', obs:true, text:'Puts up fingers sequentially, one at a time, to six.'},
+  {t:5.0,  who:'Teacher', text:'What does six look like?'},
+  {t:6.5,  who:'Josie', text:'This?'},
+  {t:6.9,  who:'Teacher', text:'Yep.'},
+  {t:9.0,  who:'Teacher', text:'There you go. Okay.'}
+];
+// per-entry state: status: 'pending' | 'accepted' | 'removed' (obs only); edited: bool; original: {who,text}
+entries.forEach(e=>{ e.status = e.lowconf ? 'pending' : null; e.edited=false; e.original={who:e.who, text:e.text}; });
+
+const vid = document.getElementById('vid');
+const playBtn = document.getElementById('playBtn');
+const wrap = document.getElementById('videoWrap');
+const fill = document.getElementById('fill');
+const progress = document.getElementById('progress');
+const timecode = document.getElementById('timecode');
+const tlist = document.getElementById('tlist');
+
+function fmt(s){ if(!isFinite(s)) s=0; const m=Math.floor(s/60), ss=Math.floor(s%60); return m+':'+String(ss).padStart(2,'0'); }
+function fmtTs(s){ const m=Math.floor(s/60), ss=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let editingIdx = null;
+let replayStopAt = null; // when set, playback pauses at this time (bounded "Replay moment")
+const REPLAY_LEAD = 1;   // seconds before the observation
+const REPLAY_LEN  = 3;   // total clip length
+
+function render(){
+  tlist.innerHTML='';
+  entries.forEach((e,i)=>{
+    const div=document.createElement('div');
+    div.className='entry'+(e.obs?' obs':'')+(e.status==='removed'?' removed':'');
+    div.dataset.i=i;
+
+    const editedTag = e.edited ? '<span class="editedTag" title="Original: '+esc(e.original.who)+': “'+esc(e.original.text)+'”">Edited</span>' : '';
+    let inner='';
+
+    if (editingIdx===i){
+      // inline editor
+      const opts = SPEAKERS.map(s=>'<option'+(s===e.who?' selected':'')+'>'+s+'</option>').join('');
+      inner='<div class="speech"><div class="editor">'+
+        '<div class="erow"><label style="font-size:12px;color:var(--gray);font-weight:600;">'+(e.obs?'Student':'Speaker')+'</label>'+
+        '<select id="editWho">'+opts+'</select></div>'+
+        '<textarea id="editText">'+esc(e.text)+'</textarea>'+
+        '<div class="erow"><button class="save" id="editSave">Save</button><button class="cancel" id="editCancel">Cancel</button></div>'+
+        '</div></div>';
+    } else if(e.obs){
+      let tag='';
+      if(e.status==='pending') tag='<span class="lowconf">⚑ Low confidence</span>';
+      else if(e.status==='accepted') tag='<span class="reviewed">✓ Reviewed</span>';
+      else if(e.status==='removed') tag='<span class="removedTag">Removed</span>';
+      let actions='';
+      if(e.status==='pending'){
+        actions='<div class="obsActions">'+
+          '<button data-act="replay" data-i="'+i+'">▶ Replay moment</button>'+
+          '<button class="accept" data-act="accept" data-i="'+i+'">✓ Accept</button>'+
+          '<button data-act="revise" data-i="'+i+'">✎ Revise</button>'+
+          '<button class="remove" data-act="remove" data-i="'+i+'">✕ Remove</button>'+
+          '</div>';
+      } else if(e.status==='removed'){
+        actions='<button class="undoBtn" data-act="undo" data-i="'+i+'">Undo remove</button>';
+      }
+      const obsHover = (e.status!=='pending' && e.status!=='removed')
+        ? '<div class="hoverBtns"><button data-act="revise" data-i="'+i+'">✎ Edit</button><button data-act="remove" data-i="'+i+'">✕ Remove</button></div>'
+        : '';
+      inner='<div class="speech"><div class="obsHead"><span>◉</span> AI observation · '+esc(e.who)+' '+editedTag+tag+'</div>'+
+        '<div class="line">'+esc(e.text)+'</div>'+actions+obsHover+'</div>';
+    } else {
+      if(e.status==='removed'){
+        inner='<div class="speech"><div class="who">'+esc(e.who)+editedTag+'<span class="removedTagInline">Removed</span></div>'+
+          '<div class="line">'+esc(e.text)+'</div>'+
+          '<button class="undoBtn" data-act="undo" data-i="'+i+'">Undo remove</button></div>';
+      } else {
+        inner='<div class="speech"><div class="who">'+esc(e.who)+editedTag+'</div><div class="line">'+esc(e.text)+'</div>'+
+          '<div class="hoverBtns"><button data-act="revise" data-i="'+i+'">✎ Edit</button><button data-act="remove" data-i="'+i+'">✕ Remove</button></div></div>';
+      }
+    }
+    div.innerHTML='<div class="ts">'+fmtTs(e.t)+'</div>'+inner;
+
+    // click = seek (but not while editing this entry, and not on buttons)
+    div.addEventListener('click',(ev)=>{
+      if (ev.target.closest('button,select,textarea,option,.editor')) return;
+      if (editingIdx===i) return;
+      replayStopAt=null;
+      vid.currentTime=e.t+0.01; vid.play();
+    });
+    tlist.appendChild(div);
+  });
+
+  // wire action buttons
+  tlist.querySelectorAll('button[data-act]').forEach(btn=>{
+    btn.addEventListener('click',(ev)=>{
+      ev.stopPropagation();
+      doAct(+btn.dataset.i, btn.dataset.act);
+    });
+  });
+  const save=document.getElementById('editSave'), cancel=document.getElementById('editCancel');
+  if(save) save.addEventListener('click',(ev)=>{
+    ev.stopPropagation();
+    const e=entries[editingIdx];
+    const newWho=document.getElementById('editWho').value;
+    const newText=document.getElementById('editText').value.trim();
+    if(newText && (newText!==e.original.text || newWho!==e.original.who)) e.edited=true;
+    if(newText){ e.text=newText; e.who=newWho; }
+    if(e.obs && e.status==='pending') e.status='accepted'; // revising a flagged obs resolves it
+    editingIdx=null; render(); updateBanner();
+  });
+  if(cancel) cancel.addEventListener('click',(ev)=>{ ev.stopPropagation(); editingIdx=null; render(); });
+  renderActivity();
+  applyFilters();
+  applyActive();
+}
+
+// Shared action handler — used by both Transcript and Activity views
+function doAct(i,act){
+  const e=entries[i];
+  if(act==='replay'){
+    const start=Math.max(0,e.t-REPLAY_LEAD);
+    vid.currentTime=start;
+    replayStopAt=start+REPLAY_LEN;
+    vid.play();
+  }
+  else if(act==='accept'){ e.status='accepted'; render(); }
+  else if(act==='remove'){ e.status='removed'; render(); }
+  else if(act==='undo'){ e.status = e.lowconf ? 'pending' : null; render(); }
+  else if(act==='revise'){
+    showTab(entries[i].obs?'c':'t'); // observations are edited in the Combined view; speech in Transcript
+    editingIdx=i; vid.pause(); render();
+    const ta=document.getElementById('editText');
+    if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }
+    const node=tlist.querySelector('.entry[data-i="'+i+'"]');
+    if(node) node.scrollIntoView({block:'center'});
+  }
+  updateBanner();
+}
+
+// ===== Activity view: same session grouped by student =====
+const alist = document.getElementById('alist');
+function statusTags(e){
+  let t='';
+  if(e.status==='pending') t+='<span class="miniTag flag">⚑ Low confidence</span>';
+  if(e.status==='accepted') t+='<span class="miniTag ok">✓ Reviewed</span>';
+  if(e.status==='removed') t+='<span class="miniTag gone">Removed</span>';
+  if(e.edited) t+='<span class="miniTag edit">Edited</span>';
+  return t ? '<div class="atags">'+t+'</div>' : '';
+}
+function renderActivity(){
+  alist.innerHTML='<div class="aHead"><div class="aname">Activity · Show me six on your fingers</div>'+
+    '<div class="atarget">Learning target: structure numbers to 10 using five as a base (finger patterns)</div></div>';
+  SPEAKERS.filter(s=>s!=='Teacher').forEach(who=>{
+    const g=document.createElement('div');
+    g.className='aGroup'; g.dataset.who=who;
+    const items=entries.map((e,i)=>({e,i})).filter(x=>x.e.who===who && x.e.obs);
+    let html='<div class="gname">'+esc(who)+'</div>';
+    if(!items.length) html+='<div class="aEmpty">No observations captured for '+esc(who)+'.</div>';
+    g.innerHTML=html;
+    items.forEach(({e,i})=>{
+      const d=document.createElement('div');
+      d.className='aItem'+(e.status==='removed'?' removed':'');
+      d.dataset.i=i;
+      let actions='';
+      if(e.status==='pending'){
+        actions='<div class="obsActions">'+
+          '<button data-act="replay" data-i="'+i+'">▶ Replay moment</button>'+
+          '<button class="accept" data-act="accept" data-i="'+i+'">✓ Accept</button>'+
+          '<button data-act="revise" data-i="'+i+'">✎ Revise</button>'+
+          '<button class="remove" data-act="remove" data-i="'+i+'">✕ Remove</button>'+
+          '</div>';
+      } else if(e.status==='removed'){
+        actions='<button class="undoBtn" data-act="undo" data-i="'+i+'">Undo remove</button>';
+      }
+      d.innerHTML='<div class="ts">'+fmtTs(e.t)+'</div><div><div class="abody">'+esc(e.text)+'</div>'+statusTags(e)+actions+'</div>';
+      d.addEventListener('click',(ev)=>{
+        if (ev.target.closest('button')) return;
+        replayStopAt=null; vid.currentTime=e.t+0.01; vid.play();
+      });
+      d.querySelectorAll('button[data-act]').forEach(btn=>{
+        btn.addEventListener('click',(ev)=>{
+          ev.stopPropagation();
+          doAct(+btn.dataset.i, btn.dataset.act);
+        });
+      });
+      g.appendChild(d);
+    });
+    alist.appendChild(g);
+  });
+}
+
+// ===== Filters =====
+const speakerFilter = new Set();
+function typeMatch(e){
+  const v=document.getElementById('typeFilter').value;
+  if(v==='speech') return !e.obs;
+  if(v==='obs') return !!e.obs;
+  if(v==='flagged') return !!e.lowconf;
+  if(v==='removed') return e.status==='removed';
+  return true;
+}
+function applyFilters(){
+  [...tlist.querySelectorAll('.entry')].forEach(n=>{
+    const e=entries[+n.dataset.i];
+    const vis=(speakerFilter.size===0 || speakerFilter.has(e.who)) && typeMatch(e)
+      && !(curTab==='t' && e.obs); // Transcript tab: speech only
+    n.style.display=vis?'':'none';
+  });
+  [...alist.querySelectorAll('.aGroup')].forEach(g=>{
+    g.style.display=(speakerFilter.size===0 || speakerFilter.has(g.dataset.who))?'':'none';
+  });
+  [...alist.querySelectorAll('.aItem')].forEach(n=>{
+    n.style.display=typeMatch(entries[+n.dataset.i])?'':'none';
+  });
+}
+document.getElementById('chips').addEventListener('click',(ev)=>{
+  const c=ev.target.closest('.chip'); if(!c) return;
+  const who=c.dataset.who;
+  if(speakerFilter.has(who)){ speakerFilter.delete(who); c.classList.remove('dark'); }
+  else { speakerFilter.add(who); c.classList.add('dark'); }
+  applyFilters();
+});
+document.getElementById('typeFilter').addEventListener('change',applyFilters);
+
+// ===== Tabs =====
+const tabT=document.getElementById('tabTranscript'), tabA=document.getElementById('tabActivity'), tabC=document.getElementById('tabCombined');
+let curTab='t';
+// Transcript = speech only · Activity = AI observations by student · Combined = speech + observations interleaved
+function showTab(which){
+  curTab=which;
+  tlist.style.display=(which==='t'||which==='c')?'':'none';
+  alist.style.display=(which==='a')?'':'none';
+  tabT.classList.toggle('active',which==='t');
+  tabA.classList.toggle('active',which==='a');
+  tabC.classList.toggle('active',which==='c');
+  applyFilters();
+}
+tabT.addEventListener('click',()=>showTab('t'));
+tabA.addEventListener('click',()=>showTab('a'));
+tabC.addEventListener('click',()=>showTab('c'));
+
+// ===== Look-fors (Formative Assessment) =====
+const LF_STUDENTS=['Melissa','Tina','Josie','Kelly'];
+const LF_COLS=['Correct, answers quickly and without counting by ones','Correct, counts up from one addend','Correct, counts forward from 1','Incorrect','Unable to solve'];
+let LF_TASKS=[
+  'Task 1 — Show me six on your fingers. (6)',
+  'Task 2 — Show me six a different way. (6)',
+  'Task 3 — Show me seven on your fingers. (7)'
+];
+let lfActive='Melissa';
+// state per student: {checks:[null | {c:colIdx, kind:'teacher'|'ai'|'flag'} per task], answers:[str per task]}
+// kind: teacher = black check, ai = purple (AI-assisted), flag = red + 🚩 (needs teacher review)
+const lfState={};
+LF_STUDENTS.forEach(s=>lfState[s]={checks:LF_TASKS.map(()=>null), answers:LF_TASKS.map(()=>'')});
+// prefill from session AI observations
+lfState['Melissa'].checks[0]={c:0,kind:'ai'};      // showed six without counting
+lfState['Melissa'].checks[1]={c:0,kind:'teacher'};
+lfState['Tina'].checks[0]={c:3,kind:'flag'};       // low-confidence observation
+lfState['Josie'].checks[0]={c:2,kind:'ai'};        // counted up one at a time
+lfState['Josie'].checks[2]={c:2,kind:'teacher'};
+lfState['Kelly'].checks[0]={c:1,kind:'flag'};      // low-confidence observation
+
+function renderLfTabs(){
+  const bar=document.getElementById('lfTabs');
+  bar.innerHTML='';
+  LF_STUDENTS.forEach(s=>{
+    const b=document.createElement('span');
+    b.className='lfTab'+(s===lfActive?' on':'');
+    b.textContent=s;
+    b.addEventListener('click',()=>{ lfActive=s; renderLfTabs(); renderLfTable(); });
+    bar.appendChild(b);
+  });
+  const add=document.createElement('span');
+  add.className='lfTab add';
+  add.textContent='+ Add student';
+  add.title='Add another student to this assessment';
+  bar.appendChild(add);
+}
+
+function renderLfTable(){
+  const st=lfState[lfActive];
+  const root=document.getElementById('lfTable');
+  root.innerHTML='';
+  // header
+  const head=document.createElement('div');
+  head.className='lfRow lfHeader';
+  head.innerHTML='<div class="lfGutter"></div><div class="lfCells">'+
+    '<div class="hlbl">Tasks</div><div class="hlbl">Record Student’s Answer</div>'+
+    LF_COLS.map(c=>'<div class="rotCell"><span class="rotLbl">'+esc(c)+'</span></div>').join('')+
+    '</div>';
+  root.appendChild(head);
+  // task rows
+  LF_TASKS.forEach((task,ti)=>{
+    const row=document.createElement('div');
+    row.className='lfRow';
+    row.innerHTML='<div class="lfGutter">'+
+      '<button data-tip="Edit" aria-label="Edit task">✎</button><button data-tip="Remove" aria-label="Remove task">✕</button></div>'+
+      '<div class="lfCells"><div class="lfTask">'+esc(task)+'</div>'+
+      '<div class="lfAnswer"><input type="text" data-t="'+ti+'" value="'+esc(st.answers[ti])+'" aria-label="Record answer"></div>'+
+      LF_COLS.map((c,ci)=>{
+        const ck=st.checks[ti];
+        const hit=ck && ck.c===ci;
+        const cls=hit?(ck.kind==='ai'?' on ai':ck.kind==='flag'?' on flagged':' on'):'';
+        const title=hit?(ck.kind==='ai'?'AI-assisted check — click to confirm as yours':ck.kind==='flag'?'Flagged: teacher needs to review this':'Teacher check'):'';
+        return '<div class="cbCell"><span class="cbBox'+cls+'" data-t="'+ti+'" data-c="'+ci+'" title="'+title+'">'+(hit?'✓':'')+'</span>'+(hit&&ck.kind==='flag'?'<span class="flagIc">🚩</span>':'')+'</div>';
+      }).join('')+
+      '</div>';
+    root.appendChild(row);
+  });
+  // add task band
+  const band=document.createElement('div');
+  band.className='lfRow lfAdd';
+  band.innerHTML='<div class="lfGutter"></div><div class="lfCells"><button id="lfAddTask">+ Add task</button></div>';
+  root.appendChild(band);
+  // wiring: one check per task row (click again to clear)
+  root.querySelectorAll('.cbBox').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const t=+b.dataset.t, c=+b.dataset.c;
+      const cur=st.checks[t];
+      // clicking an AI or flagged check confirms it as a teacher check; clicking a teacher check clears it; clicking elsewhere moves it
+      if(cur && cur.c===c){ st.checks[t] = (cur.kind==='teacher') ? null : {c:c,kind:'teacher'}; }
+      else { st.checks[t]={c:c,kind:'teacher'}; }
+      renderLfTable();
+    });
+  });
+  root.querySelectorAll('.lfAnswer input').forEach(inp=>{
+    inp.addEventListener('input',()=>{ st.answers[+inp.dataset.t]=inp.value; });
+  });
+  document.getElementById('lfAddTask').addEventListener('click',()=>{
+    LF_TASKS.push('Task '+(LF_TASKS.length+1)+' — New task');
+    LF_STUDENTS.forEach(s=>{ lfState[s].checks.push(null); lfState[s].answers.push(''); });
+    renderLfTable();
+  });
+}
+renderLfTabs();
+renderLfTable();
+
+// Live summary — regenerates from entry states; simulates AI re-summarization
+const INTERP = {
+  'Melissa':'Melissa showed six simultaneously as five fingers and one — evidence of structuring six without counting by ones.',
+  'Tina':'Tina first held up ten fingers, then looked at her hands and adjusted down, suggesting she is still checking her finger patterns visually.',
+  'Josie':'Josie raised fingers sequentially, one at a time, to six — counting by ones rather than using a known pattern.',
+  'Kelly':'Kelly showed six as five and one after checking her classmates’ hands, suggesting she may be relying on peer models.'
+};
+let firstSummary = true;
+function buildSummary(){
+  const card=document.getElementById('sumCard');
+  const status=document.getElementById('sumStatus');
+  const removed=entries.filter(e=>e.status==='removed').length;
+  const pending=entries.filter(e=>e.status==='pending').length;
+  const edited=entries.filter(e=>e.edited).length;
+  const obsIn=entries.filter(e=>e.obs && e.status!=='removed' && e.status!=='pending');
+
+  const p1='The teacher led a 0:10 finger-pattern session with Melissa, Tina, Josie, and Kelly, prompting students to show six on their fingers and describe what they saw. The teacher repeated the prompt in two forms and confirmed each student’s response before moving on.';
+  const p2 = obsIn.length
+    ? obsIn.map(e => e.edited ? (e.who+' (teacher-revised): '+e.text) : (INTERP[e.who] || (e.who+': '+e.text))).join(' ')
+    : 'No confirmed observations yet — review the flagged moments to populate this summary.';
+  const notes=[];
+  if(pending>0) notes.push(pending+(pending===1?' AI observation is':' AI observations are')+' still flagged with low confidence and excluded from this summary until reviewed.');
+  else notes.push('All flagged observations have been reviewed.');
+  if(removed>0) notes.push(removed+(removed===1?' item was':' items were')+' removed by the teacher and excluded from this summary.');
+  if(edited>0) notes.push(edited+(edited===1?' line has':' lines have')+' been edited by the teacher.');
+
+  const html='<p>'+esc(p1)+'</p><p>'+esc(p2)+'</p><p>'+notes.map(esc).join(' ')+'</p>';
+  if(firstSummary){
+    card.innerHTML=html;
+    firstSummary=false;
+  } else {
+    card.classList.add('updating');
+    status.textContent=' Updating summary…';
+    setTimeout(()=>{
+      card.innerHTML=html;
+      card.classList.remove('updating');
+      status.textContent=' Updated just now — reflects your latest transcript edits.';
+    },600);
+  }
+}
+
+function updateBanner(){
+  const remaining=entries.filter(e=>e.status==='pending').length;
+  const banner=document.getElementById('flagBanner');
+  const title=document.getElementById('flagTitle');
+  const sub=document.getElementById('flagSub');
+  const icon=document.getElementById('flagIcon');
+  if(remaining===0){
+    banner.classList.add('done'); icon.textContent='✓';
+    title.textContent='All flagged moments reviewed';
+    sub.textContent='Every low-confidence observation has been accepted, revised, or removed. This session is ready to use.';
+  } else {
+    banner.classList.remove('done'); icon.textContent='⚑';
+    title.textContent=remaining+(remaining===1?' moment needs':' moments need')+' your review';
+    sub.textContent='AI flagged '+remaining+(remaining===1?' observation':' observations')+' with low confidence. Check these before using.';
+  }
+  buildSummary();
+}
+
+// Play / pause
+function toggle(){ replayStopAt=null; vid.paused ? vid.play() : vid.pause(); }
+wrap.addEventListener('click',toggle);
+vid.addEventListener('play', ()=>playBtn.classList.add('hidden'));
+vid.addEventListener('pause',()=>playBtn.classList.remove('hidden'));
+
+progress.addEventListener('click',(ev)=>{
+  replayStopAt=null;
+  const r=progress.getBoundingClientRect();
+  vid.currentTime=((ev.clientX-r.left)/r.width)*vid.duration;
+});
+
+// Sync highlight
+let lastActive=-1;
+function applyActive(){
+  const nodes=[...tlist.querySelectorAll('.entry')];
+  nodes.forEach(n=>n.classList.remove('active'));
+  if(lastActive>=0 && nodes[lastActive]) nodes[lastActive].classList.add('active');
+}
+vid.addEventListener('timeupdate',()=>{
+  if(replayStopAt!==null && vid.currentTime>=replayStopAt){
+    vid.pause();
+    replayStopAt=null;
+  }
+  fill.style.width=(vid.currentTime/vid.duration*100)+'%';
+  timecode.textContent=fmt(vid.currentTime)+' / '+fmt(vid.duration);
+  let idx=-1;
+  for(let i=0;i<entries.length;i++){ if(vid.currentTime>=entries[i].t) idx=i; }
+  if(idx!==lastActive){
+    lastActive=idx;
+    applyActive();
+    const nodes=[...tlist.querySelectorAll('.entry')];
+    if(idx>=0 && nodes[idx] && editingIdx===null) nodes[idx].scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+});
+vid.addEventListener('loadedmetadata',()=>{ timecode.textContent='0:00 / '+fmt(vid.duration); });
+
+// Skip back 3s — free scrubbing, cancels any bounded replay
+document.getElementById('skipBack').addEventListener('click',()=>{
+  replayStopAt=null;
+  vid.currentTime=Math.max(0, vid.currentTime-3);
+});
+
+// Playback speed
+document.getElementById('speedSeg').addEventListener('click',(ev)=>{
+  const b=ev.target.closest('button[data-speed]'); if(!b) return;
+  vid.playbackRate=parseFloat(b.dataset.speed);
+  document.querySelectorAll('#speedSeg button').forEach(x=>x.classList.toggle('on',x===b));
+});
+
+// Review now → jump to first pending flagged observation
+document.getElementById('reviewNow').addEventListener('click',()=>{
+  const first=entries.findIndex(e=>e.status==='pending');
+  if(first<0) return;
+  showTab('c'); // flagged items are observations — only visible in Combined
+  const start=Math.max(0,entries[first].t-REPLAY_LEAD);
+  vid.currentTime=start;
+  replayStopAt=start+REPLAY_LEN;
+  vid.play();
+  const nodes=[...tlist.querySelectorAll('.entry')];
+  nodes[first].scrollIntoView({block:'center',behavior:'smooth'});
+});
+
+render();
+updateBanner();
+showTab('c'); // default view on load: Combined
+</script>
+</body>
+</html>
